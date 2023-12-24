@@ -26,7 +26,7 @@ void count(void *p){
     
     double x = sec->start;
     double end = sec->end;
-    double h = 0.00000001;
+    double h = 0.000000002;
     double d;
 
     while(x<end){

@@ -12,13 +12,14 @@ struct section{
 
 struct timeval t0;
 
+pthread_mutex_t m;
 double sum = 0;
 
 double f(double x){
     return log(x);
 }
 
-void count(void *p){
+void *count(void *p){
     struct section *sec = (struct section *)p;
     
     double x = sec->start;
@@ -28,16 +29,25 @@ void count(void *p){
 
     while(x<end){
         d = f(x+h/2)*h;
+        pthread_mutex_lock(&m);
         sum += d;
+        pthread_mutex_unlock(&m);
         x += h;
     }
+    return NULL;
 }
 
 int main(){
     gettimeofday(&t0, NULL);
-    struct section sec0 = {0, 4};
+    pthread_t th0, th1;
 
-    count((void *)&sec0);
+    struct section sec0 = {0, 2};
+    struct section sec1 = {2, 4};
+
+    pthread_create(&th0, NULL, count, (void *)&sec0);
+    pthread_create(&th1, NULL, count, (void *)&sec1);
+    pthread_join(th0, NULL);
+    pthread_join(th1, NULL);
 
     struct timeval t1;
     gettimeofday(&t1, NULL);

@@ -24,16 +24,16 @@ void *count(void *p){
     
     double x = sec->start;
     double end = sec->end;
-    double h = 0.00000001;
-    double d;
+    double h = 0.000000002;
+    double dsum = 0;
 
     while(x<end){
-        d = f(x+h/2)*h;
-        pthread_mutex_lock(&m);
-        sum += d;
-        pthread_mutex_unlock(&m);
+        dsum += f(x+h/2)*h;
         x += h;
     }
+    pthread_mutex_lock(&m);
+    sum += dsum;
+    pthread_mutex_unlock(&m);
     return NULL;
 }
 
